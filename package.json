@@ -1,0 +1,16 @@
+{
+  "name": "cpt-faq-builder",
+  "version": "1.0.0",
+  "description": "Central Park Tours — FAQ Builder UI",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}
