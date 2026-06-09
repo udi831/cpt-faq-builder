@@ -1168,21 +1168,27 @@
        CONSTANTS & CONFIG
     ============================================================ */
     /**
-     * API_URL is resolved at runtime via /api/config (Vercel serverless function).
-     * This allows the n8n webhook URL to be set as an environment variable in Vercel
-     * without hardcoding it into the HTML. Falls back to localhost for local dev.
+     * API_URL points to the Express backend.
+     *
+     * - Local dev:  http://localhost:3000/api/faqs  (start backend with `npm start`)
+     * - Production: update this to your deployed backend URL before opening the file,
+     *               e.g. https://your-backend.onrender.com/api/faqs
+     *
+     * The URL is resolved at runtime from /api/config if served via Vercel,
+     * otherwise falls back to the default below.
      */
-    let API_URL = 'http://localhost:5678/webhook/cpt-faq-api'; // fallback for local dev
+    let API_URL = 'http://localhost:3000/api/faqs'; // ← change for production
 
     async function resolveConfig() {
       try {
+        // When served via Vercel, /api/config returns the backend URL from env var
         const res = await fetch('/api/config');
         if (res.ok) {
           const cfg = await res.json();
           if (cfg.apiUrl) API_URL = cfg.apiUrl;
         }
       } catch {
-        // Running locally without Vercel — localhost fallback is used
+        // Not served via Vercel — localhost fallback is used
       }
     }
 
@@ -1199,7 +1205,9 @@
       general:      { bg: '#f1f5f9', text: '#334155', dot: '#64748b' },
       contact:      { bg: '#f0fdf4', text: '#14532d', dot: '#16a34a' }
     };
-    const CATEGORIES = Object.keys(CATEGORY_COLORS);
+    // All selectable categories — excludes 'general' which is only a fallback,
+    // not a category staff should explicitly assign.
+    const CATEGORIES = Object.keys(CATEGORY_COLORS).filter(c => c !== 'general');
 
     /* ============================================================
        STATE
